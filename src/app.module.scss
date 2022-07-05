@@ -1,0 +1,51 @@
+.container {
+  height: 80vh;
+  width: 60vw;
+  margin: 2% auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+  .messagesBlock {
+    .message {
+      margin: 15px 15px 0px;
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+      display: flex;
+
+      .image {
+        height: 100px;
+        margin: 5px;
+      }
+
+      .textBlock {
+        margin: 5px;
+        display: flex;
+        flex-direction: column;
+        .name {
+          font-weight: bold;
+          font-size: 20px;
+          color: green;
+          text-transform: capitalize;
+        }
+      }
+    }
+  }
+
+  .inputBlock {
+    margin: 15px;
+
+    .textarea {
+      height: 100px;
+      width: 100%;
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+      border: none;
+    }
+
+    .button {
+      margin-top: 10px;
+
+    }
+  }
+}
+
