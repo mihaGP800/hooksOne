@@ -1,27 +1,37 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, MutableRefObject, useEffect, useRef, useState} from 'react';
 import s from './app.module.scss'
 import userPhoto from './assets/image/userPhoto.png'
-import {v1} from 'uuid';
+
+
+type UserType = {
+    userId: number
+    photo: string,
+    userName: string
+    message: string
+}
+
+type UsersType = UserType[]
 
 function App() {
+
+    const messagesBlockRef = useRef<HTMLDivElement>(null)
+
     const [message, setMessage] = useState('')
     const [ws, setWs] = useState<WebSocket | null>(null)
 
-    const [users, setUsers] = useState([
-        {
-            userId: v1(),
-            photo: userPhoto,
-            userName: 'Bob',
-            message: 'content content content content content content content '
-        }
-    ])
+    const [users, setUsers] = useState<UsersType>([])
+
+    if (ws) ws.onmessage = (messageEvent) => {
+        console.log(JSON.parse(messageEvent.data))
+        setUsers([...users, ...JSON.parse(messageEvent.data)])
+
+        if (messagesBlockRef.current) messagesBlockRef.current.scrollTo(0, messagesBlockRef.current.scrollHeight)
+    }
+
     useEffect(() => {
         let localWs = new WebSocket('wss://social-network.samuraijs.com/handlers/ChatHandler.ashx')
         setWs(localWs)
-        localWs.onmessage = (messageEvent) => {
-            console.log(JSON.parse(messageEvent.data))
-            setUsers(JSON.parse(messageEvent.data))
-        }
+
     }, [])
 
     const onChangeTextHandle = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -30,13 +40,15 @@ function App() {
 
     const addMessageHandle = () => {
         ws!.send(message)
+        setMessage('')
     }
 
     return (
         <div className={s.container}>
-            <div className={s.messagesBlock}>
+            <div ref={messagesBlockRef} className={s.messagesBlock}>
                 {users.map((u, i) => <div key={i} className={s.message}>
-                        <img className={s.photo} src={u.photo} alt="userPhoto"/>
+                        <img className={s.photo} src={u.photo ? u.photo : userPhoto}
+                             alt="userPhoto"/>
                         <div className={s.textBlock}>
                             <span className={s.userName}>{u.userName}</span>
                             <span className={s.text}>{u.message}</span>
